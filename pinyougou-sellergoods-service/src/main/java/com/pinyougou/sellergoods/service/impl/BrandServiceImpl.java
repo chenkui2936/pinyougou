@@ -32,4 +32,11 @@ public class BrandServiceImpl implements BrandService {
 		return new PageResult(page.getTotal(), page.getResult());
 	}
 
+	@Override
+	public void add(TbBrand tbBrand) {
+		// TODO Auto-generated method stub
+		brandMapper.insert(tbBrand);
+
+	}
+
 }
