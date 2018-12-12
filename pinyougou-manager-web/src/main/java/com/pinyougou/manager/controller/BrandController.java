@@ -2,7 +2,6 @@ package com.pinyougou.manager.controller;
 
 import java.util.List;
 
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,12 +16,14 @@ import entity.PageResult;
 public class BrandController {
 	@Reference
 	private BrandService brandService;
-@RequestMapping("/findAll")
+
+	@RequestMapping("/findAll")
 	public List<TbBrand> findAll() {
 		return brandService.findAll();
 	}
-@RequestMapping("/findPage")
-public PageResult findPage(int page,int size) {
-	return brandService.findPage(page, size);
-}
+
+	@RequestMapping("/findPage")
+	public PageResult findPage(int page, int size) {
+		return brandService.findPage(page, size);
+	}
 }
