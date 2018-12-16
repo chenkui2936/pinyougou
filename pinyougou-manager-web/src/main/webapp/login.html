@@ -11,9 +11,11 @@
 
     <link rel="stylesheet" type="text/css" href="css/webbase.css" />
     <link rel="stylesheet" type="text/css" href="css/pages-login-manage.css" />
+    
+   
 </head>
 
-<body>
+<body  >
 	<div class="loginmanage">
 		<div class="py-container">
 			<h4 class="manage-title">品优购运营商运营管理后台</h4>
@@ -37,12 +39,12 @@
 						<img src="../img/wx_cz.jpg" />
 					</div>
 					<div id="profile" class="tab-pane  active">
-						<form class="sui-form">
+						<form class="sui-form" id="loginform" action="/login" method="post">
 							<div class="input-prepend"><span class="add-on loginname"></span>
-								<input id="prependedInput" type="text" placeholder="邮箱/用户名/手机号" class="span2 input-xfat">
+								<input id="prependedInput" type="text" name="username" placeholder="邮箱/用户名/手机号" class="span2 input-xfat">
 							</div>
 							<div class="input-prepend"><span class="add-on loginpwd"></span>
-								<input id="prependedInput" type="password" placeholder="请输入密码" class="span2 input-xfat">
+								<input id="prependedInput" type="password" name="password" placeholder="请输入密码" class="span2 input-xfat">
 							</div>
 							<div class="setting">
 								 <div id="slider">
@@ -51,7 +53,7 @@
 									</div>
 							</div>
 							<div class="logined">
-								<a class="sui-btn btn-block btn-xlarge btn-danger" href="admin/index.html" target="_blank">登&nbsp;&nbsp;录</a>
+								<input class="sui-btn btn-block btn-xlarge btn-danger" type="submit" target="_blank">登&nbsp;&nbsp;录</buttn>
 							</div>
 						</form>
 
