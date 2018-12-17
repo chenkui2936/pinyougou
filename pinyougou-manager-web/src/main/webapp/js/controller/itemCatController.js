@@ -1,5 +1,5 @@
  //控制层 
-app.controller('itemCatController' ,function($scope,$controller   ,itemCatService){	
+app.controller('itemCatController' ,function($scope,$controller,$http   ,itemCatService){	
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -75,6 +75,41 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 				$scope.paginationConf.totalItems=response.total;//更新总记录数
 			}			
 		);
+	}
+	
+	$scope.findByParentId=function(parentId){
+		
+		itemCatService.findByParentId(parentId).success(
+		//$http.post('../itemCat/findByParentId.do?parentId='+parentId).success(
+				
+		function(response){
+			
+			$scope.list=response;
+		}		
+		)	
+		
+	}
+	$scope.grade=1;
+	$scope.setGrade=function(value){
+		$scope.grade=value;
+	}
+	$scope.selectList=function(p_entity){
+		
+		if($scope.grade==1){
+	
+			$scope.entity_1=null;
+			$scope.entity_2=null;
+		}
+		if ($scope.grade==2){
+			
+			$scope.entity_1=p_entity;
+			$scope.entity_2=null;
+		}
+		if($scope.grade==3){
+			
+			$scope.entity_2=p_entity;
+		}
+		$scope.findByParentId(p_entity.id);
 	}
     
 });	

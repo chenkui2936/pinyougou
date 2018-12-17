@@ -113,6 +113,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pinyougou.pojo.TbGoods" >
+   <selectKey resultType="Long" order="AFTER" keyProperty="id">
+    SELECT LAST_INSERT_ID() AS id
+    </selectKey>
     insert into tb_goods (id, seller_id, goods_name, 
       default_item_id, audit_status, is_marketable, 
       brand_id, caption, category1_id, 
@@ -228,6 +231,7 @@
         #{isDelete,jdbcType=VARCHAR},
       </if>
     </trim>
+   
   </insert>
   <select id="countByExample" parameterType="com.pinyougou.pojo.TbGoodsExample" resultType="java.lang.Integer" >
     select count(*) from tb_goods

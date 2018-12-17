@@ -25,7 +25,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		// TODO Auto-generated method stub
 		List<GrantedAuthority> grantdAuths=new ArrayList<GrantedAuthority>();
 		grantdAuths.add(new SimpleGrantedAuthority("ROLE_SELLER"));
-		System.out.println(username);
 //		return new User(username, "123456", grantdAuths);
 		//得到商家对象
 				TbSeller seller = sellerService.findOne(username);
