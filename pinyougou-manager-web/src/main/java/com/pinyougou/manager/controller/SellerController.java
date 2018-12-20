@@ -114,6 +114,7 @@ public class SellerController {
 	
 	@RequestMapping("/updateStatus")
 	public Result updateStatus(String sellerId,String status) {
+		
 		try {
 			sellerService.updateStatus(sellerId, status);
 			return new Result(true, "成功");

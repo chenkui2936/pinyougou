@@ -8,7 +8,7 @@ app.service('uploadService',function($http){
 			url:"../upload.do",
 			data:formData,
 			headers:{'Content-Type':undefined},
-			transformRequest:angular.identity
+			transformRequest:angular.identity//表单数据序列化
 		});
 	}
 });
