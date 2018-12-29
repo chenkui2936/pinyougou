@@ -17,7 +17,7 @@ import entity.Result;
 @RestController
 @RequestMapping("/brand")
 public class BrandController {
-	@Reference
+	@Reference(timeout=50000)
 	private BrandService brandService;
 
 	@RequestMapping("/findAll")

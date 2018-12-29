@@ -2,15 +2,23 @@ package com.pinyougou.manager.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.pinyougou.page.service.ItemPageService;
+import com.alibaba.fastjson.JSON;
+
 import com.pinyougou.pojo.TbGoods;
 import com.pinyougou.pojo.TbItem;
 import com.pinyougou.pojogroup.Goods;
-import com.pinyougou.search.service.ItemSearchService;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
@@ -26,10 +34,21 @@ public class GoodsController {
 
 	@Reference
 	private GoodsService goodsService;
-	@Reference
-	private ItemSearchService itemSearchService;
-	@Reference(timeout=50000)
-	private ItemPageService itemPageService;
+	//@Reference
+	//private ItemSearchService itemSearchService;
+	//@Reference(timeout=50000)
+	//private ItemPageService itemPageService;
+	@Autowired
+	private JmsTemplate jmsTemplate;
+	@Autowired
+	private Destination queueSolrDestination;
+	@Autowired
+	private Destination queueSolrDeleteDestination;
+	@Autowired
+	private Destination topicPageDestination;
+	
+	@Autowired
+	private Destination topicPageDeleteDestination;
 	
 	/**
 	 * 返回全部列表
@@ -89,11 +108,28 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/delete")
-	public Result delete(Long [] ids){
+	public Result delete(final Long [] ids){
 		try {
 
 			goodsService.delete(ids);
-			itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+			//itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+			jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+				
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					// TODO Auto-generated method stub
+					
+					return session.createObjectMessage(ids);
+				}
+			});
+			jmsTemplate.send(topicPageDeleteDestination, new MessageCreator() {
+				
+				@Override
+				public Message createMessage(Session session) throws JMSException {
+					// TODO Auto-generated method stub
+					return session.createObjectMessage(ids);
+				}
+			});
 			return new Result(true, "删除成功"); 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -120,13 +156,30 @@ public class GoodsController {
 				List<TbItem> itemList=goodsService.findItemListByGoodsIdandStatus(ids, status);
 				//调用搜索接口实现数据批量导入 
 				if(itemList.size()>0) {
-					itemSearchService.importList(itemList);
+				//	itemSearchService.importList(itemList);
+					final String jsonString = JSON.toJSONString(itemList);
+					jmsTemplate.send(queueSolrDestination, new MessageCreator() {
+						
+						@Override
+						public Message createMessage(Session session) throws JMSException {
+							// TODO Auto-generated method stub
+							return session.createTextMessage(jsonString);
+						}
+					});
 				}else {
 					System.out.println("没有明细数据");
 				}
 				//静态页面生成
-				for (Long goodsId : ids) {
-					itemPageService.genItemHtml(goodsId);
+				for (final Long goodsId : ids) {
+					//itemPageService.genItemHtml(goodsId);
+					jmsTemplate.send(topicPageDestination, new MessageCreator() {
+						
+						@Override
+						public Message createMessage(Session session) throws JMSException {
+							// TODO Auto-generated method stub
+							return session.createTextMessage(goodsId+"");
+						}
+					});
 				}
 			}
 			return new Result(true, "成功");
@@ -135,9 +188,9 @@ public class GoodsController {
 			return new Result(false, "失败");
 		}		
 	}
-	@RequestMapping("/genHtml")
-	public void genHtml(Long goodsId) {
-		itemPageService.genItemHtml(goodsId);
-	}
+//	@RequestMapping("/genHtml")
+//	public void genHtml(Long goodsId) {
+//		itemPageService.genItemHtml(goodsId);
+//	}
 	
 }
